@@ -7,10 +7,21 @@ import { msgTypes } from './registry';
 import { IgniteClient } from "../client"
 import { MissingWalletError } from "../helpers"
 import { Api } from "./rest";
+import { MsgSendIbcTopRank } from "./types/leaderboard/leaderboard/tx";
 
 
-export {  };
+export { MsgSendIbcTopRank };
 
+type sendMsgSendIbcTopRankParams = {
+  value: MsgSendIbcTopRank,
+  fee?: StdFee,
+  memo?: string
+};
+
+
+type msgSendIbcTopRankParams = {
+  value: MsgSendIbcTopRank,
+};
 
 
 export const registry = new Registry(msgTypes);
@@ -30,6 +41,28 @@ export const txClient = ({ signer, prefix, addr }: TxClientOptions = { addr: "ht
 
   return {
 		
+		async sendMsgSendIbcTopRank({ value, fee, memo }: sendMsgSendIbcTopRankParams): Promise<DeliverTxResponse> {
+			if (!signer) {
+					throw new Error('TxClient:sendMsgSendIbcTopRank: Unable to sign Tx. Signer is not present.')
+			}
+			try {			
+				const { address } = (await signer.getAccounts())[0]; 
+				const signingClient = await SigningStargateClient.connectWithSigner(addr,signer,{registry, prefix});
+				let msg = this.msgSendIbcTopRank({ value: MsgSendIbcTopRank.fromPartial(value) })
+				return await signingClient.signAndBroadcast(address, [msg], fee ? fee : defaultFee, memo)
+			} catch (e: any) {
+				throw new Error('TxClient:sendMsgSendIbcTopRank: Could not broadcast Tx: '+ e.message)
+			}
+		},
+		
+		
+		msgSendIbcTopRank({ value }: msgSendIbcTopRankParams): EncodeObject {
+			try {
+				return { typeUrl: "/cosmonaut.leaderboard.leaderboard.MsgSendIbcTopRank", value: MsgSendIbcTopRank.fromPartial( value ) }  
+			} catch (e: any) {
+				throw new Error('TxClient:MsgSendIbcTopRank: Could not create message: ' + e.message)
+			}
+		},
 		
 	}
 };

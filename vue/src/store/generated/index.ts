@@ -1,8 +1,10 @@
 // THIS FILE IS GENERATED AUTOMATICALLY. DO NOT MODIFY.
 
+import CosmonautLeaderboardLeaderboard from './cosmonaut.leaderboard.leaderboard'
 
 
 export default { 
+  CosmonautLeaderboardLeaderboard: load(CosmonautLeaderboardLeaderboard, 'cosmonaut.leaderboard.leaderboard'),
   
 }
 
